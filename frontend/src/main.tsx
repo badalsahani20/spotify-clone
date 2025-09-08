@@ -14,9 +14,9 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <AuthProvider>
-        <BrowserRouter>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}> {/*the authentication library*/}
+      <AuthProvider> {/*//It manages tokens*/}
+        <BrowserRouter> {/*//Makes navigation work (/home, /login, etc.) without reloading the page.*/}
           <App />
         </BrowserRouter>
       </AuthProvider>
