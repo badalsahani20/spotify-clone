@@ -33,8 +33,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
-app.use("/api/album", albumRoutes); 
-app.use("/api/stats", statsRoutes); 
+app.use("/api/album", albumRoutes);
+app.use("/api/stats", statsRoutes);
 
 //error handler
 app.use((error,req, res, next) => {
@@ -45,3 +45,5 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT} `);
     connectDB();
 })
+
+//todo: socket.io
