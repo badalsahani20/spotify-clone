@@ -49,7 +49,7 @@ export const createSong = async(req, res, next) => {
         }
         res.status(201).json(song);
     } catch (error) {
-        console.log("Error in creatSong", error);
+        console.log("Error in createSong", error);
         next(error);
     }
 }
@@ -78,24 +78,28 @@ export const createAlbum = async(req, res, next) => {
         const { imageFile } = req.files;
 
         const imageUrl = await uploadToCloudinary(imageFile);
-        const createAlbum = new Album ({
+        const album = new Album ({
             title,
             artist,
             imageUrl,
             releaseYear
         });
-        await album.save();
-        res.status(201).json(album); 
+        await album.save(); //fixed the bug
+        res.status(201).json(album);
     } catch (error) {
         console.log("Error in createAlbum", error);
         next(error);
     }
 }
 
+
+
 export const deleteAlbum = async(req, res, next) => {
     try {
         const { id } = req.params;
+        // Delete all songs associated with the album
         await Song.deleteMany({ albumId: id});
+        // Delete the album itself
         await Album.findByIdAndDelete(id);
         res.status(200).json({ message: "Album deleted successfully"});
     } catch (error) {
