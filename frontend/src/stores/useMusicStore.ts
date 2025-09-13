@@ -36,7 +36,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
            
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
-                set({ error: error.response?.data?.message || "Something went wrong" });
+                set({ error: error.response?.data?.message || "Failed to fetch albums" });
             }
         }finally{
             set({isLoading: false});
@@ -51,7 +51,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
             return response.data
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
-                set({ error: error.response?.data?.message || "Something went wrong" });
+                set({ error: error.response?.data?.message || "Failed to fetch album" });
             }
         } finally {
             set({ isLoading: false });
