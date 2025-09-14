@@ -2,7 +2,7 @@ import { Song } from "../models/song.model.js"
 export const getAllSongs = async(req, res, next) => {
     try {
         // -1 Stands for Descending order which means newest to oldest
-        const songs = await Song.find().sott({ createdAt: -1});
+        const songs = await Song.find().sort({ createdAt: -1});
         res.json(songs);
     } catch (error) {
         next(error);
@@ -33,7 +33,7 @@ export const getFeaturedSongs = async(req, res, next) => {
 
 export const getTrendingSongs = async(req, res, next) => {
    try {
-        const songs = await Songs.aggregate([
+        const songs = await Song.aggregate([
             {$sample: {size: 4}},
             {
                 $project:{
@@ -51,7 +51,7 @@ export const getTrendingSongs = async(req, res, next) => {
 }
 export const getMadeForYouSongs = async(req, res, next) => {
     try {
-        const songs = await Songs.aggregate([
+        const songs = await Song.aggregate([
             {$sample: {size: 4}},
             {
                 $project:{
