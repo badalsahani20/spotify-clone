@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Clock, Play } from 'lucide-react';
 import  { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { usePlayerStore } from '@/stores/usePlayerStore';
 
 const formatDuration = (seconds:number) => {
     const minutes = Math.floor(seconds/60);
@@ -15,6 +16,7 @@ const formatDuration = (seconds:number) => {
 const AlbumPage = () => {
     const { albumId } = useParams();
     const { fetchAlbumById, currentAlbum, isLoading} = useMusicStore();
+    const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
     useEffect(() => {
         if (albumId) {
             fetchAlbumById(albumId);
@@ -22,6 +24,11 @@ const AlbumPage = () => {
     },[fetchAlbumById, albumId]);
 
     if(isLoading) return null;
+
+    const handlePlayAlbum = (index:number) => {
+        if (!currentAlbum) return;
+        playAlbum(currentAlbum?.songs, index);
+    }
 
   return (
     <div className='h-full'>
@@ -79,12 +86,21 @@ const AlbumPage = () => {
                     {/* Songs List */}
                     <div className='px-6'>
                         <div className='space-y-2 py-4'>
-                            {currentAlbum?.songs.map((song, index) => (
+                            {currentAlbum?.songs.map((song, index) => {
+                                const isCurrentSong = currentSong?._id === song._id;
+                            return (
                                 <div key={song._id}
+                                    onClick={() => handlePlayAlbum(index)}
                                     className='grid grid-cols-[16px_4fr_2fr_1fr] gap-4 px-4 py-2 text-sm text-zinc-400 hover:bg-white/5 rounded-md group cursor-pointer'>
                                     <div className='flex items-center justify-center'>
-                                        <span className='group-hover:hidden'>{index+1}</span>
+                                        {isCurrentSong && isPlaying ? (
+                                            <div className='size-4 text-green-500'>♬</div>
+                                        ): (
+                                            <span className='group-hover:hidden'>{index+1}</span>
+                                        )}
+                                        {!isCurrentSong && (
                                         <Play className='h-4 w-4 hidden group-hover:block' />
+                                        )}
                                     </div>
                                     <div className='flex items-center gap-3'>
                                         <img src={song.imageUrl} alt={song.title} className='size-10' />
@@ -102,7 +118,8 @@ const AlbumPage = () => {
                                             {formatDuration(song.duration)}
                                         </div>
                                 </div>
-                            ))}
+                            )}
+                        )}
                         </div>
                     </div>
                 </div>
