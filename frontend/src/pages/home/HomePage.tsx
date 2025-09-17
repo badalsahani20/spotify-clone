@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import FeaturedSection from "./components/FeaturedSection";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SectionGrid from "./components/SectionGrid";
+import { usePlayerStore } from "@/stores/usePlayerStore";
 
 const HomePage = () => {
   const {
@@ -16,12 +17,25 @@ const HomePage = () => {
     trendingSongs,
   } = useMusicStore();
 
+  const { initializeQueue } = usePlayerStore();
+
+  useEffect(() => {
+    if(madeForYouSongs.length > 0 && featuredSongs.length > 0 && trendingSongs.length > 0) {
+        const allSongs = [
+            ...madeForYouSongs,
+            ...featuredSongs,
+            ...trendingSongs
+        ]
+        initializeQueue(allSongs)
+    }
+  }, [featuredSongs, initializeQueue, madeForYouSongs, trendingSongs])
+
   useEffect(() => {
     fetchFeaturedSongs();
     fetchMadeForYouSongs();
     fetchTrendingSongs();
   }, [fetchFeaturedSongs, fetchMadeForYouSongs, fetchTrendingSongs]);
-  console.log({ isLoading, madeForYouSongs, featuredSongs, trendingSongs });
+  // console.log({ isLoading, madeForYouSongs, featuredSongs, trendingSongs });
 
   return (
     <main className="rounded-md overflow-hidden h-full bg-gradient-to-b from-zinc-800 to-zinc-900">
@@ -40,7 +54,7 @@ const HomePage = () => {
               isLoading={isLoading}
             />
             <SectionGrid
-              title="trending"
+              title="Trending"
               songs={trendingSongs}
               isLoading={isLoading}
             />

@@ -4,10 +4,24 @@ import LeftSideBar from "./components/LeftSideBar";
 import FriendsActivity from "./components/FriendsActivity";
 import AudioPlayer from "./components/AudioPlayer";
 import PlaybackControls from "./components/PlaybackControls";
+import { useEffect, useState } from "react";
 
 
 const MainLayout = () => {
-    const isMobile = false;
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+      const checkMobile= () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => {
+        window.removeEventListener("resize", checkMobile);
+      };
+    })
+    
   return (
     <div className="h-screen bg-black text-white flex flex-col">
       <ResizablePanelGroup direction={"horizontal"} className="flex-1 flex h-full overflow-hidden p-2">
