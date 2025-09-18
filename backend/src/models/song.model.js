@@ -25,7 +25,8 @@ const songSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Album',
         required: false,
-    }
+    },
+    timesListened: { type: Number, default: 0 }
 }, {timestamps: true});
 
 export const Song = mongoose.model('Song', songSchema);

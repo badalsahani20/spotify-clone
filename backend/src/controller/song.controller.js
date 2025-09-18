@@ -31,6 +31,21 @@ export const getFeaturedSongs = async(req, res, next) => {
     }
 }
 
+export const PlaySong = async (req, res, next) => {
+    try {
+        const songId = req.params.id;
+        const song = await Song.findById(songId);
+        if(!song) return res.status(404).json({ message: "Song not found"});
+
+        song.timesListened += song.duration; //add duration in second
+        await song.save();
+
+        res.json({ message: "Play counted", timesListened: song.timesListened});
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const getTrendingSongs = async(req, res, next) => {
    try {
         const songs = await Song.aggregate([
