@@ -11,13 +11,13 @@ import { useEffect } from 'react'
 const LeftSideBar = () => {
 
     //Data fetching here
-    const { albums, fetchAlbums, isLoading } = useMusicStore();
+    const { albums, fetchAlbums, isLoadingAlbums } = useMusicStore();
 
     useEffect(() => {
         fetchAlbums()
     }, [fetchAlbums])
 
-    console.log({ albums });
+    // console.log({ albums });
 
   return (
     <div className='h-full flex flex-col gap-2'>
@@ -55,7 +55,7 @@ const LeftSideBar = () => {
             </div>
             <ScrollArea className='h-[calc(100vh-300px)]'>
                 <div className='space-y-2'>
-                    {isLoading ? (
+                    {isLoadingAlbums ? (
                         <PlaylistSkeleton />
                     ) : (
                         albums.map((album) => (

@@ -11,7 +11,8 @@ const HomePage = () => {
     fetchFeaturedSongs,
     fetchMadeForYouSongs,
     fetchTrendingSongs,
-    isLoading,
+    isLoadingMadeForYouSongs,
+    isLoadingTrendingSongs,
     madeForYouSongs,
     featuredSongs,
     trendingSongs,
@@ -51,12 +52,12 @@ const HomePage = () => {
             <SectionGrid
               title="Made For You"
               songs={madeForYouSongs}
-              isLoading={isLoading}
+              isLoading={isLoadingMadeForYouSongs}
             />
             <SectionGrid
               title="Trending"
               songs={trendingSongs}
-              isLoading={isLoading}
+              isLoading={isLoadingTrendingSongs}
             />
           </div>
         </div>
