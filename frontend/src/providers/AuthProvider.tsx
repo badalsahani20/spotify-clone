@@ -2,7 +2,7 @@ import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useAuth } from '@clerk/clerk-react';
 import { Loader } from 'lucide-react';
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 
 const updateApiToken = (token:string | null) => {
     if(token){
@@ -12,8 +12,8 @@ const updateApiToken = (token:string | null) => {
     }
 }
 
-const AuthProvider = ({children}:{children: ReactNode}) => {
-    const { getToken } = useAuth();
+const AuthProvider = ({children}:{children: React.ReactNode}) => {
+    const { getToken} = useAuth();
     const [loading, setLoading] = useState(true);
     const { checkAdminStatus } = useAuthStore();
 
@@ -35,7 +35,7 @@ const AuthProvider = ({children}:{children: ReactNode}) => {
         };
 
         initAuth();
-    }, [getToken]);
+    }, [checkAdminStatus, getToken]);
 
     if (loading) return (
         <div className='h-screen w-full flex items-center justify-center'>

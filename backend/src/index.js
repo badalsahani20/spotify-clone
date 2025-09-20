@@ -37,7 +37,7 @@ app.use(fileUpload({
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/songs", songRoutes); 
+app.use("/api/songs", songRoutes);
 app.use("/api/album", albumRoutes);
 app.use("/api/stats", statsRoutes);
 
