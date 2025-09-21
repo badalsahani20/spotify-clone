@@ -32,6 +32,8 @@ interface MusicStore {
     fetchSongs: () => Promise<void>;
     deleteSong: (id: string) => Promise<void>;
     deleteAlbum: (id: string) => Promise<void>;
+    addSong: (song: Song) => void;
+    addAlbum: (album: Album) => void;
 }
 
 export const useMusicStore = create<MusicStore>((set) => ({
@@ -58,25 +60,35 @@ export const useMusicStore = create<MusicStore>((set) => ({
         totalListeningHours: "0.0",
     },
 
+    addAlbum: (album) => set((state) => ({
+        albums: [...state.albums, album],
+    })),
+    
+    addSong: (song) => set((state) => ({
+        songs: [...state.songs, song],
+    })),
+
     deleteAlbum: async (id) => {
-        set({ isLoadingAlbums: true, error: null});
-        try {
-            await axiosInstance.delete(`/admin/albums/${id}`);
-            set( state => ({
-                albums: state.albums.filter(album => album._id !== id),
-                songs: state.songs.map((song) =>
-                    song.albumId === state.albums.find((a) => a._id === id)?._id ? { ...song, album: null} : song
-                ),
-            }));
-            toast.success("Album deleted successfully");
-        } catch (error) {
-            if(error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Failed to delete album");
-                set({ error: error.response?.data?.message || "Failed to delete album"});
-            }
-        } finally {
-            set({ isLoadingAlbums: false });
+    set({ isLoadingAlbums: true, error: null });
+    try {
+        await axiosInstance.delete(`/admin/album/${id}`);
+        set((state) => ({
+            albums: state.albums.filter((album) => album._id !== id),
+            songs: state.songs.map((song) =>
+                song.albumId === id ? { ...song, album: null } : song
+            ),
+        }));
+        toast.success("Album deleted successfully");
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            toast.error(error.response?.data?.message || "Failed to delete album");
+            set({
+                error: error.response?.data?.message || "Failed to delete album",
+            });
         }
+    } finally {
+        set({ isLoadingAlbums: false });
+    }
     },
     deleteSong: async (id) => {
         set({ isLoadingSongs: true, error: null });

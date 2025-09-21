@@ -16,3 +16,4 @@ backend/dist
 # OS-specific
 .DS_Store
 Thumbs.db
+backend/temp

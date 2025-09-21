@@ -35,6 +35,21 @@ const AuthProvider = ({children}:{children: React.ReactNode}) => {
         };
 
         initAuth();
+
+        const interceptor = axiosInstance.interceptors.request.use(async (config) => {
+        const token = await getToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            delete config.headers.Authorization;
+        }
+        return config;
+    });
+
+    // cleanup on unmount
+    return () => {
+      axiosInstance.interceptors.request.eject(interceptor);
+    };
     }, [checkAdminStatus, getToken]);
 
     if (loading) return (

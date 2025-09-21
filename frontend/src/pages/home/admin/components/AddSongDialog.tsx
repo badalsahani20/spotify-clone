@@ -1,15 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useMusicStore } from "@/stores/useMusicStore";
-import { DialogTrigger } from "@radix-ui/react-dialog";
+// import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Plus, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { axiosInstance } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { useAuth } from "@clerk/clerk-react";
 
 
 interface NewSong {
@@ -20,7 +19,7 @@ interface NewSong {
 }
 const AddSongDialog = () => {
 
-    const {albums} = useMusicStore();
+    const {albums, addSong} = useMusicStore();
     const [songDialogOpen, setSongDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -50,48 +49,45 @@ const AddSongDialog = () => {
 
 
     console.log(axiosInstance.defaults.headers.common);
-    const { getToken } = useAuth();
     const handleSubmit = async () => {
-  setIsLoading(true);
+        setIsLoading(true);
 
-  try {
-    if (!files.audio || !files.image) return alert("Please upload all files");
+        try {
+            if (!files.audio || !files.image) return alert("Please upload all files");
+            const formData = new FormData();
+            formData.append("title", newSong.title);
+            formData.append("artist", newSong.artist);
+            formData.append("duration", newSong.duration);
+            if (newSong.album && newSong.album !== "none") {
+            formData.append("albumId", newSong.album);
+            }
+            formData.append("audioFile", files.audio);
+            formData.append("imageFile", files.image);
 
-    const token = await getToken(); // ⚡ fresh token every time
-    const formData = new FormData();
-    formData.append("title", newSong.title);
-    formData.append("artist", newSong.artist);
-    formData.append("duration", newSong.duration);
-    if (newSong.album && newSong.album !== "none") {
-      formData.append("albumId", newSong.album);
-    }
-    formData.append("audioFile", files.audio);
-    formData.append("imageFile", files.image);
+            //Post to backend
+            const res = await axiosInstance.post("/admin/songs", formData);
+            const createdSong = res.data;
 
-    await axiosInstance.post("/admin/songs", formData, {
-      headers: {
-        // "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`, // fresh token
-      } as Record<string, string>,
-    });
+            addSong(createdSong);
 
-    setNewSong({ title: "", artist: "", album: "", duration: "0" });
-    setFiles({ audio: null, image: null });
-    toast.success("Song added successfully");
+            //reset form + show toast
+            setNewSong({ title: "", artist: "", album: "", duration: "0" });
+            setFiles({ audio: null, image: null });
+            toast.success("Song added successfully");
 
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      const message = error.response?.data?.message || "Failed to add song";
-      toast.error(message);
-    } else {
-      console.error("Unexpected error:", error);
-      toast.error("Something went wrong");
-    }
-  } finally {
-    setIsLoading(false);
-    setSongDialogOpen(false);
-  }
-};
+            } catch (error: unknown) {
+                if (error instanceof AxiosError) {
+                    const message = error.response?.data?.message || "Failed to add song";
+                    toast.error(message);
+                } else {
+                    console.error("Unexpected error:", error);
+                    toast.error("Something went wrong");
+                }
+            } finally {
+                setIsLoading(false);
+                setSongDialogOpen(false);
+                }
+            };
 
   return <Dialog open={songDialogOpen} onOpenChange={setSongDialogOpen}>
     <DialogTrigger asChild>
@@ -131,7 +127,11 @@ const AddSongDialog = () => {
              hidden
              accept="image/*"
              ref={imageInputRef}
-             onChange={(e) => setFiles((prev) => ({...prev, image: e.target.files![0] }))}
+             onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setFiles((prev) => ({ ...prev, image: file }));
+                }}
+
               />
 
               {/* image upload area */}
@@ -195,7 +195,6 @@ const AddSongDialog = () => {
                     <Input
                         value={newSong.duration}
                         disabled
-                        onChange={(e) => setNewSong({...newSong, duration: (e.target.value) || "0" })}
                         className="bg-zinc-800 border-zinc-700" />
                 </div>
 
@@ -228,7 +227,6 @@ const AddSongDialog = () => {
                 </Button>
             </DialogFooter>
     </DialogContent>
-        
   </Dialog>
 }
 
