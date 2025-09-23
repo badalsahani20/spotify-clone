@@ -1,18 +1,34 @@
 import { axiosInstance } from '@/lib/axios';
 import { AxiosError } from 'axios';
 import { create } from 'zustand';
+import type { Message } from '@/types';
 
 interface ChatStore {
-    users: any[];
-    fetchUsers: () => Promise<void>;
+    users: unknown[];
     isLoading: boolean;
     error: string|null;
+    socket: unknown;
+    isConnected: boolean;
+    onlineUsers: Set<string>;
+    userActivities: Map<string, string>;
+    messages: Message[];
+
+    fetchUsers: () => Promise<void>;
+    initSocket: (userId: string) => void;
+    disConnectSocket: () => void;
+    sendMessage: (receiverId: string, senderId: string, content:string) => void;
 }
 
 export const useChatStore = create<ChatStore> ((set) => ({
     users: [],
     isLoading: false,
     error: null,
+    socket: null,
+    isConnected: false,
+    onlineUsers: new Set(),
+    userActivities: new Map(),
+    messages: [],
+
     fetchUsers : async() => {
     set({ isLoading: true, error: null });
         try {
@@ -25,5 +41,10 @@ export const useChatStore = create<ChatStore> ((set) => ({
         } finally{
             set({ isLoading: false });
         }
-    }
+    },
+    initSocket: async() => {},
+
+    disConnectSocket: async() => {},
+
+    sendMessage: async() => {}
 }))
