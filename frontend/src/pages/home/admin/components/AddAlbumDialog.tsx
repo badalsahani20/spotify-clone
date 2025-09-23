@@ -40,12 +40,18 @@ const AddAlbumDialog = () => {
 
             // Post to backend
             const formData = new FormData();
+            console.log({
+    title: newAlbum.title,
+    artist: newAlbum.artist,
+    releaseYear: newAlbum.releaseYear,
+    imageFile,
+});
             formData.append("title", newAlbum.title);
             formData.append("artist", newAlbum.artist);
             formData.append("releaseYear", newAlbum.releaseYear.toString());
             formData.append("imageFile", imageFile);
 
-            const res = await axiosInstance.post("/admin/songs", formData);
+            const res = await axiosInstance.post("/admin/albums", formData);
             const createdAlbum = res.data;
             // update Zustand store
             addAlbum(createdAlbum);
@@ -85,6 +91,7 @@ const AddAlbumDialog = () => {
         <div className='space-y-4 py-4'>
             <input
                 type='file'
+                id="albumFile"
                 ref={fileInputRef}
                 onChange={handleImageSelect}
                 accept='image/*'
@@ -103,6 +110,15 @@ const AddAlbumDialog = () => {
                             Choose File
                         </Button>
                     </div>
+                </div>
+                <div className='space-y-2'>
+                    <label className='text-sm font-medium'>Album Title</label>
+                    <Input
+                        className='bg-zinc-800 border-zinc-700'
+                        value={newAlbum.title}
+                        onChange={(e) => setNewAlbum({...newAlbum, title: e.target.value})}
+                        placeholder='Enter title'
+                     />
                 </div>
                 <div className='space-y-2'>
                     <label className='text-sm font-medium'>Artist</label>
