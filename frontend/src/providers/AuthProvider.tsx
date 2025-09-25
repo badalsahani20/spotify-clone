@@ -1,7 +1,9 @@
 import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useChatStore } from '@/stores/useChatStore';
 import { useAuth } from '@clerk/clerk-react';
 import { Loader } from 'lucide-react';
+// import { disconnect } from 'process';
 import { useEffect, useState } from 'react'
 
 const updateApiToken = (token:string | null) => {
@@ -13,18 +15,19 @@ const updateApiToken = (token:string | null) => {
 }
 
 const AuthProvider = ({children}:{children: React.ReactNode}) => {
-    const { getToken} = useAuth();
+    const { getToken, userId } = useAuth();
     const [loading, setLoading] = useState(true);
     const { checkAdminStatus } = useAuthStore();
-
+    const { initSocket, disConnectSocket } = useChatStore();
     useEffect(() => {
         const initAuth = async () => {
             try {
                 const token = await getToken();
                 updateApiToken(token);
-
+                
                 if(token) {
                     await checkAdminStatus();
+                    if(userId) initSocket(userId);
                 }
             } catch (error) {
                 updateApiToken(null);
@@ -48,9 +51,10 @@ const AuthProvider = ({children}:{children: React.ReactNode}) => {
 
     // cleanup on unmount
     return () => {
+        disConnectSocket();
       axiosInstance.interceptors.request.eject(interceptor);
     };
-    }, [checkAdminStatus, getToken]);
+    }, [checkAdminStatus, disConnectSocket, getToken, initSocket, userId]);
 
     if (loading) return (
         <div className='h-screen w-full flex items-center justify-center'>
