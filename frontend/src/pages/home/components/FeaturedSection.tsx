@@ -20,7 +20,7 @@ const FeaturedSection = () => {
                     <p className='font-medium truncate'>{song.title}</p>
                     <p className='text-sm text-zinc-400 truncate'>{song.artist}</p>
                 </div>
-                {/* //Todo: Add play button */}
+                
                 <PlayButton song={song} />
             </div>
         ))}

@@ -7,7 +7,7 @@ import  { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { usePlayerStore } from '@/stores/usePlayerStore';
 
-export const formatDuration = (seconds:number) => {
+ const formatDuration = (seconds:number) => {
     const minutes = Math.floor(seconds/60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
@@ -15,7 +15,7 @@ export const formatDuration = (seconds:number) => {
 
 const AlbumPage = () => {
     const { albumId } = useParams();
-    const { fetchAlbumById, currentAlbum, isLoading} = useMusicStore();
+    const { fetchAlbumById, currentAlbum, isLoadingAlbums} = useMusicStore();
     const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
     useEffect(() => {
         if (albumId) {
@@ -23,7 +23,7 @@ const AlbumPage = () => {
         }
     },[fetchAlbumById, albumId]);
 
-    if(isLoading) return null;
+    if(isLoadingAlbums) return null;
 
     const handlePlayAlbum = () => {
         if(!currentAlbum) return;

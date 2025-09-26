@@ -10,7 +10,7 @@ interface ChatStore {
     users: User[];
     isLoading: boolean;
     error: string|null;
-    socket: Socket | null;
+    socket: Socket;
     isConnected: boolean;
     onlineUsers: Set<string>;
     userActivities: Map<string, string>;

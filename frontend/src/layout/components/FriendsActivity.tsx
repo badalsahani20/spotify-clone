@@ -7,8 +7,8 @@ import { useEffect } from 'react';
 
 const FriendsActivity = () => {
 
-    const { users, fetchUsers } = useChatStore();
-    const isPlaying= true;
+    const { users, fetchUsers, onlineUsers, userActivities } = useChatStore();
+    // const isPlaying= true;
     const { user } = useUser();
     useEffect(() => {
         if(user)fetchUsers();
@@ -25,7 +25,13 @@ const FriendsActivity = () => {
       {!user && <LoginPrompt />}
       <ScrollArea className='flex-1'>
         <div className='p-4 space-y-4'>
-            {users.map((user) => (
+            {users.map((user) => {
+                const activity = userActivities.get(user._id);
+                const isPlaying = (activity ?? "Idle") !== "Idle";
+                const parts = activity?.replace("Playing ", "").split(" by ")[0].trim() || [];
+                const songName = parts[0];
+                const artistName = parts[1];
+                return (
                 <div
                 key={user._id}
                 className='cursor-pointer hover:bg-zinc-800/50 p-3 rounded-md transition-colors group'>
@@ -38,7 +44,8 @@ const FriendsActivity = () => {
                                 />
                                 <AvatarFallback>{user.fullName[0]}</AvatarFallback>
                             </Avatar>
-                            <div className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 bg-zinc-500' aria-hidden='true' />
+                            <div className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900
+                                ${onlineUsers.has(user.clerkId) ? "bg-green-500" : "bg-zinc-500"}`} aria-hidden='true' />
                         </div>
                         <div className='flex-1 min-w-0'>
                             <div className='flex items-center gap-2'>
@@ -49,9 +56,9 @@ const FriendsActivity = () => {
                             </div>
                             {isPlaying ? (
                                 <div className='mt-1'>
-                                    <div className='mt-1 text-sm text-white font-medium truncate'>Cardigan</div>
+                                    <div className='mt-1 text-sm text-white font-medium truncate'>{songName}</div>
                                     <div className='text-xs text-zinc-400 truncate'>
-                                        by Taylor Swift
+                                        {artistName}
                                     </div>
                                 </div>
                             ) : (
@@ -60,7 +67,9 @@ const FriendsActivity = () => {
                         </div>
                     </div>
                 </div>
-            ))}
+            )
+            }
+        )}
         </div>
       </ScrollArea>
     </div>

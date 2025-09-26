@@ -27,7 +27,10 @@ export const initializeSocket = (server) => {
             io.emit("activities", Array.from(userActivities.entries()));
         })
 
-        socket.on("update_Activity", ({userId, activity}) => {
+        socket.on("update_activity", ({activity}) => {
+            const userId = socket.handshake.auth.userId;
+            if(!userId) return;
+
             userActivities.set(userId, activity);
             io.emit("activity_updated", {userId, activity})
         })
