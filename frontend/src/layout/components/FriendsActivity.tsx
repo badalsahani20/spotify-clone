@@ -26,11 +26,13 @@ const FriendsActivity = () => {
       <ScrollArea className='flex-1'>
         <div className='p-4 space-y-4'>
             {users.map((user) => {
-                const activity = userActivities.get(user._id);
+                const activity = userActivities.get(user.clerkId);
                 const isPlaying = (activity ?? "Idle") !== "Idle";
-                const parts = activity?.replace("Playing ", "").split(" by ")[0].trim() || [];
-                const songName = parts[0];
-                const artistName = parts[1];
+                const parts = activity?.replace("Playing ", "").split(" by ") || [];
+                const songName = parts[0]?.trim();
+                const artistName = parts[1]?.trim() || "Unknown Artist";
+
+
                 return (
                 <div
                 key={user._id}
