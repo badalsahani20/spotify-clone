@@ -33,7 +33,7 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchFeaturedSongs();
-    fetchMadeForYouSongs();
+    fetchMadeForYouSongs(4);
     fetchTrendingSongs();
   }, [fetchFeaturedSongs, fetchMadeForYouSongs, fetchTrendingSongs]);
   // console.log({ isLoading, madeForYouSongs, featuredSongs, trendingSongs });

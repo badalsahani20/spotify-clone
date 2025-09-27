@@ -66,17 +66,16 @@ export const getTrendingSongs = async(req, res, next) => {
 }
 export const getMadeForYouSongs = async(req, res, next) => {
     try {
-        const songs = await Song.aggregate([
-            {$sample: {size: 4}},
-            {
-                $project:{
-                    title:1,
-                    artist:1,
-                    imageUrl:1,
-                    audioUrl:1
-                }
-             }
-        ])
+        const limit = req.query.limit;
+        let songs;
+        if(limit && limit !== "all") {
+            songs = await Song.aggregate([
+                { $sample: { size: parseInt(limit) } },
+                { $project: {title:1, artist:1, imageUrl:1, audioUrl:1} }
+            ]);
+        }else {
+            songs = await Song.find().sort({ timesListened: -1})
+        }
         res.json(songs);
     } catch (error) {
         next(error);

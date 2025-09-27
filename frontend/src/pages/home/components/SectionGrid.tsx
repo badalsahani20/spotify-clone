@@ -2,6 +2,7 @@ import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton"
 import { Button } from "@/components/ui/button"
 import type { Song } from "@/types"
 import PlayButton from "./PlayButton"
+import { Link } from "react-router-dom"
 
 type SectionGridProps = {
     title: string,
@@ -16,8 +17,8 @@ const SectionGrid = ({title, songs, isLoading} : SectionGridProps) => {
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
-        <Button variant={'link'} className="text-sm text-zinc-400 hover:text-white">
-            Show all
+        <Button asChild variant={'link'} className="text-sm text-zinc-400 hover:text-white">
+            <Link to={"/all-songs"}>Show All</Link>
         </Button>
       </div>
 
